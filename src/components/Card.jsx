@@ -1,10 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const Card = ({ currentDate: initialDate }) => {
+const Card = ({ currentDate: initialDate, onClose }) => {
   const [currentDate, setCurrentDate] = useState(initialDate);
   const cardRef = useRef(null);
 
+  const handlePreviousMonth = () => {
+    setCurrentDate(currentDate.subtract(1, 'month'));
+  };
 
+  const handleNextMonth = () => {
+    setCurrentDate(currentDate.add(1, 'month'));
+  };
+
+
+ 
+ 
 
   return (
     <div className="fixed top-0 left-0 mt-20 ml-4 z-50">
