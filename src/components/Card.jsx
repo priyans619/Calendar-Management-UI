@@ -15,8 +15,18 @@ const Card = ({ currentDate: initialDate, onClose }) => {
     setCurrentDate(currentDate.add(1, 'month'));
   };
 
+  const daysInMonth = currentDate.daysInMonth();
+  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const startDay = currentDate.startOf('month').day(); // Day of the week the month starts on
+  const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
- 
+
+  const calendarGrid = [];
+  for (let i = 0; i < startDay; i++) {
+    calendarGrid.push(null);
+  }
+  daysArray.forEach(day => calendarGrid.push(day));
+
  
 
   return (
