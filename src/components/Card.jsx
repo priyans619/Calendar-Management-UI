@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import dayjs from 'dayjs';
 
 const Card = ({ currentDate: initialDate, onClose }) => {
   const [currentDate, setCurrentDate] = useState(initialDate);
