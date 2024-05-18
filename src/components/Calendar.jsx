@@ -28,7 +28,20 @@ const Calendar = ({ currentDate }) => {
             })}
           </tr>
         </thead>
-        
+        <tbody>
+          {Array.from({ length: 15 }).map((_, rowIndex) => ( // Add 5 rows
+            <tr key={rowIndex}>
+              {daysArray.map((day) => (
+                <td
+                  key={day}
+                  className="px-10 py-8 border border-gray-300 text-center"
+                >
+                 
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );
