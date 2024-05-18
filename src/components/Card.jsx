@@ -30,7 +30,17 @@ const Card = ({ currentDate: initialDate, onClose }) => {
             </div>
           ))}
         </div>
-        
+        <div className="grid grid-cols-7 gap-1 border-t border-gray-400 mt-1">
+          {calendarGrid.map((day, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-center h-6 text-sm"
+              style={{ borderTop: index < 7 ? 'none' : '1px solid #ccc' }}
+            >
+              {day}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
