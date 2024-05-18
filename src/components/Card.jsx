@@ -20,14 +20,29 @@ const Card = ({ currentDate: initialDate, onClose }) => {
   const startDay = currentDate.startOf('month').day(); // Day of the week the month starts on
   const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-
+ 
   const calendarGrid = [];
   for (let i = 0; i < startDay; i++) {
     calendarGrid.push(null);
   }
   daysArray.forEach(day => calendarGrid.push(day));
 
- 
+  useEffect(() => {
+    // for detect clicks outside the card
+    const handleClickOutside = (event) => {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        onClose(); 
+      }
+    };
+
+    // Bind the event
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      // Unbind the event 
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
 
   return (
     <div className="fixed top-0 left-0 mt-20 ml-4 z-50">
