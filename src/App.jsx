@@ -28,7 +28,17 @@ function App() {
         <h1 className="text-2xl font-bold cursor-pointer" onClick={toggleCardVisibility}>
           {currentDate.format('MMMM YYYY')}
         </h1>
-        
+        <div className="flex space-x-2 items-center">
+          <button onClick={handlePreviousMonth} className="text-white hover:text-gray-300">
+            &lt;
+          </button>
+          <button onClick={handleToday} className="text-white hover:text-gray-300">
+            Today
+          </button>
+          <button onClick={handleNextMonth} className="text-white hover:text-gray-300">
+            &gt;
+          </button>
+        </div>
       </header>
       {isCardVisible && <Card currentDate={currentDate} onClose={toggleCardVisibility} />}
       
