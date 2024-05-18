@@ -22,7 +22,15 @@ const Card = ({ currentDate: initialDate, onClose }) => {
   return (
     <div className="fixed top-0 left-0 mt-20 ml-4 z-50">
       <div ref={cardRef} className="bg-white rounded-lg shadow-lg max-w-xs">
-        
+        <div className="flex justify-between items-center px-3 py-2">
+          <button onClick={handlePreviousMonth} className="text-gray-500 hover:text-gray-700">
+            <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+          </button>
+          <h2 className="text-lg font-bold">{currentDate.format('MMMM YYYY')}</h2>
+          <button onClick={handleNextMonth} className="text-gray-500 hover:text-gray-700">
+            <FontAwesomeIcon icon={faChevronRight} size="lg" />
+          </button>
+        </div>
         <div className="grid grid-cols-7 gap-2 px-1">
           {daysOfWeek.map((day, index) => (
             <div key={index} className="flex items-center justify-center font-bold text-sm">
