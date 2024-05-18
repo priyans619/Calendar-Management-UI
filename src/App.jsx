@@ -10,6 +10,17 @@ function App() {
     setIsCardVisible(!isCardVisible);
   };
 
+  const handlePreviousMonth = () => {
+    setCurrentDate(currentDate.subtract(1, 'month'));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(currentDate.add(1, 'month'));
+  };
+
+  const handleToday = () => {
+    setCurrentDate(dayjs());
+  };
 
   return (
     <div className="App">
