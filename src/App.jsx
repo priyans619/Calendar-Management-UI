@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Card from './components/Card';
+import Calendar from './components/Calendar';
 import dayjs from 'dayjs';
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
         </div>
       </header>
       {isCardVisible && <Card currentDate={currentDate} onClose={toggleCardVisibility} />}
-      
+      <Calendar currentDate={currentDate} />
     </div>
   );
 }
