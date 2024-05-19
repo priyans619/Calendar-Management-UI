@@ -25,7 +25,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header p-4 bg-blue-500 text-white text-center flex justify-between items-center">
+      <header className="App-header p-4 bg-gray-100 text-blue-500 text-center flex justify-between items-center">
         <h1 className="text-2xl font-bold cursor-pointer" onClick={toggleCardVisibility}>
           {currentDate.format('MMMM YYYY')}
         </h1>
