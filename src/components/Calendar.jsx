@@ -36,7 +36,7 @@ const Calendar = ({ currentDate }) => {
         const rowEvents = prevEvents[currentRow] || [];
         return {
           ...prevEvents,
-          [currentRow]: [...rowEvents, { start: dragStart, end: dragEnd }],
+          [currentRow]: [...rowEvents, { start: dragStart, end: dragEnd, name: 'New Event' }],
         };
       });
     }
@@ -119,7 +119,9 @@ const Calendar = ({ currentDate }) => {
                             key={index}
                             className="absolute top-2 bottom-2 left-0 right-0 bg-blue-200 opacity-75 rounded"
                             style={{ left: `${(start - 1) * 100}%`, right: `${100 - end * 100}%` }}
-                          ></div>
+                          >
+                            {event.name}
+                          </div>
                         );
                       }
                       return null;
