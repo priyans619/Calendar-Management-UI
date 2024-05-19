@@ -29,14 +29,14 @@ function App() {
         <h1 className="text-2xl font-bold cursor-pointer" onClick={toggleCardVisibility}>
           {currentDate.format('MMMM YYYY')}
         </h1>
-        <div className="flex space-x-2 items-center">
-          <button onClick={handlePreviousMonth} className="text-white hover:text-gray-300">
+        <div className="flex space-x-3 items-center text-2xl">
+          <button onClick={handlePreviousMonth} className="text-blue-500 ">
             &lt;
           </button>
-          <button onClick={handleToday} className="text-white hover:text-gray-300">
+          <button onClick={handleToday} className="text-blue-500 ">
             Today
           </button>
-          <button onClick={handleNextMonth} className="text-white hover:text-gray-300">
+          <button onClick={handleNextMonth} className="text-blue-500 ">
             &gt;
           </button>
         </div>
