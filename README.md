@@ -73,7 +73,7 @@ To set up a development environment, please follow these steps:
 
  1. 3 things that you learned from this assignment?
 
- A.
+     A.
     -> Always do the things which is asked to do, I was creating the card first  which is popping on clicking the Header Date and becaue of that I didnt get time to create event functionality smoothly.
 
     -> Learnt the effective use of hooks like useRef and useEffect
@@ -82,12 +82,12 @@ To set up a development environment, please follow these steps:
 
  2. What was the most difficult part of the assignment?
 
- A.
+    A.
     I will not say difficult but Creating the event functionality due to lack of time.
 
  3. What you would have done differently given more time?
  
- A.
+    A.
     I can make the whole UI in first place than can add many more functionality.
 
 
