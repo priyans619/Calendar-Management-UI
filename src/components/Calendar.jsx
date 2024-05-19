@@ -17,16 +17,18 @@ const Calendar = ({ currentDate }) => {
       <table className="min-w-full table-fixed border-collapse border border-gray-300">
         <thead>
           <tr>
-            <th className="px-4 border  border-gray-300 bg-gray-100 text-sm text-center"></th>
+            <th className="w-32 px-4  border border-gray-300 text-sm text-left "></th>
             {daysArray.map((day) => {
               const date = currentDate.date(day);
               return (
                 <th
                   key={day}
-                  className="px-4 border border-gray-300 bg-gray-100 text-sm text-center"
+                  className="px-4 border border-gray-300  text-sm text-left whitespace-nowrap"
                 >
-                  {date.format('D')}<br />
-                  {date.format('ddd')}
+                  <div className="flex items-center">
+                    <span>{date.format('D')}</span>
+                    <span className="ml-2">{date.format('ddd')}</span>
+                  </div>
                 </th>
               );
             })}
@@ -35,11 +37,11 @@ const Calendar = ({ currentDate }) => {
         <tbody>
           {resourceLabels.map((resource, rowIndex) => (
             <tr key={rowIndex}>
-              <td className="px-8 py-2 border border-gray-300 font-bold bg-gray-100 whitespace-nowrap">{resource}</td>
+              <td className="w-32 pr-16 border border-gray-300 font-bold  text-left align-top whitespace-nowrap">{resource}</td>
               {daysArray.map((day) => (
                 <td
                   key={day}
-                  className="px-10 py-8 border border-gray-300 text-center"
+                  className="px-10 py-8 border border-gray-300 text-left align-top"
                 >
                 
                 </td>
