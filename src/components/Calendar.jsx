@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 
 const Calendar = ({ currentDate }) => {
@@ -8,72 +8,96 @@ const Calendar = ({ currentDate }) => {
 
   const daysInMonth = currentDate.daysInMonth();
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-  // labels from 'Resource A' to 'Resource O'
   const resourceLabels = Array.from({ length: 15 }, (_, i) => `Resource ${String.fromCharCode(65 + i)}`);
 
-  // for tracking the events for each row
-  const [events, setEvents] = useState({});
+  // Initialize state from local storage if available
+  const [events, setEvents] = useState(() => {
+    const storedEvents = localStorage.getItem('calendarEvents');
+    return storedEvents ? JSON.parse(storedEvents) : {};
+  });
 
-  // to track the start and end points of the drag
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
   const [currentRow, setCurrentRow] = useState(null);
-
-  // State to track the scroll position during dragging
+  const [isDragging, setIsDragging] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
+  const [eventBeingMoved, setEventBeingMoved] = useState(null);
   const scrollContainerRef = useRef(null);
 
-  // Function to handle mouse down event
-  const handleMouseDown = (day, rowIndex) => {
+  // this useEffect will save events to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem('calendarEvents', JSON.stringify(events));
+  }, [events]);
+
+  const handleMouseDown = (day, rowIndex, eventIndex = null) => {
+    setIsDragging(true);
     setDragStart(day);
+    setDragEnd(day);
     setCurrentRow(rowIndex);
+    if (eventIndex !== null) {
+      setIsMoving(true);
+      setEventBeingMoved({ index: eventIndex, originalStart: events[rowIndex][eventIndex].start });
+    }
   };
 
-  // Function to handle mouse up event
   const handleMouseUp = () => {
     if (dragStart !== null && dragEnd !== null && currentRow !== null) {
-      setEvents((prevEvents) => {
-        const rowEvents = prevEvents[currentRow] || [];
-        return {
-          ...prevEvents,
-          [currentRow]: [...rowEvents, { start: dragStart, end: dragEnd, name: 'New Event' }],
-        };
-      });
+      if (isMoving && eventBeingMoved !== null) {
+        const distance = dragEnd - eventBeingMoved.originalStart;
+        moveEvent(currentRow, eventBeingMoved.index, distance);
+      } else if (dragStart !== dragEnd) {
+        addNewEvent();
+      }
     }
+    resetDragging();
+  };
+
+  const handleMouseEnter = (day) => {
+    if (isDragging) {
+      setDragEnd(day);
+    }
+  };
+
+  const moveEvent = (rowIndex, eventIndex, distance) => {
+    setEvents((prevEvents) => {
+      let eventsInRow = [...prevEvents[rowIndex]];
+      let event = { ...eventsInRow[eventIndex] };
+      const newStart = event.start + distance;
+      const newEnd = event.end + distance;
+      // Prevent overlapping
+      if (canMoveEvent(eventsInRow, eventIndex, newStart, newEnd)) {
+        event.start = newStart;
+        event.end = newEnd;
+        eventsInRow[eventIndex] = event;
+      }
+      return { ...prevEvents, [rowIndex]: eventsInRow };
+    });
+  };
+
+  const canMoveEvent = (eventsInRow, currentIndex, newStart, newEnd) => {
+    return eventsInRow.every((evt, idx) => {
+      if (idx === currentIndex) return true; // Ignore self in overlap check
+      return newEnd < evt.start || newStart > evt.end;
+    });
+  };
+
+  const addNewEvent = () => {
+    setEvents((prevEvents) => {
+      const rowEvents = prevEvents[currentRow] || [];
+      return {
+        ...prevEvents,
+        [currentRow]: [...rowEvents, { start: Math.min(dragStart, dragEnd), end: Math.max(dragStart, dragEnd), name: 'New Event' }],
+      };
+    });
+  };
+
+  const resetDragging = () => {
     setDragStart(null);
     setDragEnd(null);
     setCurrentRow(null);
-  };
-
-  // Function to handle mouse enter event
-  const handleMouseEnter = (day) => {
-    if (dragStart !== null) {
-      setDragEnd(day);
-      ensureScrollVisible(day);
-    }
-  };
-
-  // Ensure the dragged area is visible by scrolling the container
-  const ensureScrollVisible = (day) => {
-    if (scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const cellWidth = container.scrollWidth / daysInMonth;
-      const targetScroll = (day - 1) * cellWidth;
-
-      const smoothScrollThreshold = 1000; 
-
-      if (targetScroll < container.scrollLeft) {
-        container.scrollTo({
-          left: targetScroll - cellWidth,
-          behavior: 'smooth',
-        });
-      } else if (targetScroll + cellWidth > container.scrollLeft + container.clientWidth) {
-        container.scrollTo({
-          left: targetScroll - container.clientWidth + cellWidth,
-          behavior: 'smooth',
-        });
-      }
-    }
+    setIsDragging(false);
+    setIsMoving(false);
+    setEventBeingMoved(null);
   };
 
   return (
@@ -108,26 +132,28 @@ const Calendar = ({ currentDate }) => {
                   className="relative px-10 py-8 border border-gray-300 text-left align-top cursor-pointer"
                   onMouseDown={() => handleMouseDown(day, rowIndex)}
                   onMouseEnter={() => handleMouseEnter(day)}
+                  onMouseUp={handleMouseUp}  // this mouse up is captured everywhere
                 >
                   {events[rowIndex] &&
                     events[rowIndex].map((event, index) => {
-                      const start = Math.min(event.start, event.end);
-                      const end = Math.max(event.start, event.end);
-                      if (day >= start && day <= end) {
+                      if (day >= event.start && day <= event.end) {
                         return (
                           <div
                             key={index}
                             className="absolute top-2 bottom-2 left-0 right-0 bg-blue-200 opacity-75 rounded"
-                            style={{ left: `${(start - 1) * 100}%`, right: `${100 - end * 100}%` }}
+                            style={{
+                              left: 0,
+                              width: '100%',
+                            }}
                           >
-                            {event.name}
+                            {day === event.start && <span>{event.name}</span>}
                           </div>
                         );
                       }
                       return null;
                     })}
-                  {dragStart !== null && dragEnd !== null && currentRow === rowIndex && day >= Math.min(dragStart, dragEnd) && day <= Math.max(dragStart, dragEnd) && (
-                    <div className="absolute top-2 bottom-2 left-0 right-0 bg-blue-300 opacity-50 rounded"></div>
+                  {isDragging && currentRow === rowIndex && day >= Math.min(dragStart, dragEnd) && day <= Math.max(dragStart, dragEnd) && (
+                    <div className="absolute top-2 bottom-2 left-0 right-0 bg-blue-300 opacity-50 rounded" style={{ left: 0, width: '100%' }}></div>
                   )}
                 </td>
               ))}
