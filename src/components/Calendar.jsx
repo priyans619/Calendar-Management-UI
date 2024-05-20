@@ -10,9 +10,15 @@ const Calendar = ({ currentDate }) => {
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const resourceLabels = Array.from({ length: 15 }, (_, i) => `Resource ${String.fromCharCode(65 + i)}`);
 
-  // Initialize state from local storage if available
+  // colors for each row
+  const eventColors = [
+    "#f28b82", "#fbbc04", "#fff475", "#ccff90", "#a7ffeb", 
+    "#cbf0f8", "#aecbfa", "#d7aefb", "#fdcfe8", "#e6c9a8", 
+    "#e8eaed", "#ccff90", "#a7ffeb", "#fbbc04", "#f28b82"
+  ];
+
   const [events, setEvents] = useState(() => {
-    const storedEvents = localStorage.getItem('calendarEvents');
+    const storedEvents = sessionStorage.getItem('calendarEvents');
     return storedEvents ? JSON.parse(storedEvents) : {};
   });
 
@@ -24,9 +30,9 @@ const Calendar = ({ currentDate }) => {
   const [eventBeingMoved, setEventBeingMoved] = useState(null);
   const scrollContainerRef = useRef(null);
 
-  // this useEffect will save events to local storage whenever they change
+  // useEffect to save events to session storage
   useEffect(() => {
-    localStorage.setItem('calendarEvents', JSON.stringify(events));
+    sessionStorage.setItem('calendarEvents', JSON.stringify(events));
   }, [events]);
 
   const handleMouseDown = (day, rowIndex, eventIndex = null) => {
@@ -86,7 +92,7 @@ const Calendar = ({ currentDate }) => {
       const rowEvents = prevEvents[currentRow] || [];
       return {
         ...prevEvents,
-        [currentRow]: [...rowEvents, { start: Math.min(dragStart, dragEnd), end: Math.max(dragStart, dragEnd), name: 'New Event' }],
+        [currentRow]: [...rowEvents, { start: Math.min(dragStart, dragEnd), end: Math.max(dragStart, dragEnd), name: 'New Event', color: eventColors[currentRow] }],
       };
     });
   };
@@ -99,7 +105,6 @@ const Calendar = ({ currentDate }) => {
     setIsMoving(false);
     setEventBeingMoved(null);
   };
-
   return (
     <div className="overflow-x-auto" ref={scrollContainerRef} onMouseUp={handleMouseUp}>
       <table className="min-w-full table-fixed border-collapse border border-gray-300">
@@ -132,7 +137,7 @@ const Calendar = ({ currentDate }) => {
                   className="relative px-10 py-8 border border-gray-300 text-left align-top cursor-pointer"
                   onMouseDown={() => handleMouseDown(day, rowIndex)}
                   onMouseEnter={() => handleMouseEnter(day)}
-                  onMouseUp={handleMouseUp}  // this mouse up is captured everywhere
+                  onMouseUp={handleMouseUp}  // Ensuring mouse up is captured everywhere
                 >
                   {events[rowIndex] &&
                     events[rowIndex].map((event, index) => {
@@ -140,10 +145,11 @@ const Calendar = ({ currentDate }) => {
                         return (
                           <div
                             key={index}
-                            className="absolute top-2 bottom-2 left-0 right-0 bg-blue-200 opacity-75 rounded"
+                            className="absolute top-2 bottom-2 left-0 right-0"
                             style={{
-                              left: 0,
-                              width: '100%',
+                              backgroundColor: event.color,
+                              opacity: 0.75,
+                              borderRadius: '4px'
                             }}
                           >
                             {day === event.start && <span>{event.name}</span>}
